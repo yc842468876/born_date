@@ -1,15 +1,29 @@
-const arr = [1, 2, 3, 4];
-const set = new Set();
+const obj = {
+  name: '小明',
+  age: 18,
+};
 
-const data = arr.forEach((item, index) => set.add(item));
+const handler = {
+  get: (obj, prop) => {
+    console.log('get', prop);
 
-console.log(data);
+    return obj?.[prop] || null;
+  },
 
-const p = new Promise((resolve, reject) => {
-  setTimeout(resolve, 1000);
-});
+  set: (obj, prop, value) => {
+    console.log('set', prop, value);
 
-console.log('start', 1111111111);
-p.then(() => {
-  console.log('then', 222222222);
-});
+    obj[prop] = value;
+  },
+};
+
+const p = new Proxy(obj, handler);
+
+console.log(p.name);
+console.log(p.a);
+
+p.name = '老六';
+p.c = 7;
+
+console.log(obj);
+console.log(p);
