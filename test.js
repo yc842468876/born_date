@@ -1,29 +1,11 @@
-const obj = {
-  name: '小明',
-  age: 18,
-};
+const { log } = require('console');
+const fs = require('fs');
 
-const handler = {
-  get: (obj, prop) => {
-    console.log('get', prop);
+const data = fs.readFileSync('./__临时笔记.txt');
+console.log(data);
 
-    return obj?.[prop] || null;
-  },
+const data2 = ['1 ', '5', '11'].map(parseInt);
 
-  set: (obj, prop, value) => {
-    console.log('set', prop, value);
+console.log(data2);
 
-    obj[prop] = value;
-  },
-};
-
-const p = new Proxy(obj, handler);
-
-console.log(p.name);
-console.log(p.a);
-
-p.name = '老六';
-p.c = 7;
-
-console.log(obj);
-console.log(p);
+console.log(parseInt('15', 0));
