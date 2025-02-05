@@ -1,9 +1,273 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <meta charset="utf-8" />
+    <title>抽奖页面</title>
+    <style>
+      /* 全局样式重置 */
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      /* 抽奖容器样式 */
+      .box {
+        background-color: lightgray;
+        width: 340px;
+        height: 340px;
+        position: relative;
+      }
+
+      /* 奖品方块样式 */
+      .box div {
+        background-color: cadetblue;
+        width: 100px;
+        height: 100px;
+        text-align: center;
+        line-height: 100px;
+      }
+
+      /* 各个奖品方块定位样式 */
+      .div1 {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+      }
+
+      .div2 {
+        position: absolute;
+        top: 10px;
+        left: 120px;
+      }
+
+      .div3 {
+        position: absolute;
+        top: 10px;
+        left: 230px;
+      }
+
+      .div4 {
+        position: absolute;
+        top: 120px;
+        left: 230px;
+      }
+
+      .div5 {
+        position: absolute;
+        top: 230px;
+        left: 230px;
+      }
+
+      .div6 {
+        position: absolute;
+        top: 230px;
+        left: 120px;
+      }
+
+      .div7 {
+        position: absolute;
+        top: 230px;
+        left: 10px;
+      }
+
+      .div8 {
+        position: absolute;
+        top: 120px;
+        left: 10px;
+      }
+
+      /* 抽奖按钮样式 */
+      .giftButton {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        top: 120px;
+        left: 120px;
+        border-radius: 10px;
+        background-color: navajowhite;
+      }
+
+      #bigAlert {
+        display: flex;
+        position: fixed;
+        /* z-index: 1; */
+        /* left: 0; */
+        top: 0;
+        width: 100%;
+        height: 100%;
+        /* overflow: auto; */
+        background-color: rgba(0, 0, 0, 0.4);
+        align-content: center;
+      }
+
+      .alertContent {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: white;
+        border-radius: 10px;
+        /* margin: 15%; */
+        /* padding: 20px; */
+        /* border: 1px solid #888; */
+        width: 300px;
+        height: 100px;
+        /* margin-left: auto;
+				margin-right: auto; */
+        margin: auto;
+      }
+
+      .buttonAlert {
+        padding: 10px;
+        color: black;
+        background-color: gold;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      .buttonAlert:hover {
+        background-color: #609ea0;
+        color: blue;
+        transition: 0.3s ease;
+      }
+
+      .mengban {
+        background-color: rgba(0, 0, 0, 0.5);
+        width: 100%;
+        height: 100%;
+        /* z-index: 2; */
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        border-radius: 8px;
+      }
+    </style>
   </head>
-  <body></body>
+
+  <body>
+    <div class="box">
+      <div class="div1">电脑</div>
+      <div class="div2">手机</div>
+      <div class="div3">音响</div>
+      <div class="div4">冰箱</div>
+      <div class="div5">空调</div>
+      <div class="div6">衣柜</div>
+      <div class="div7">沙发</div>
+      <div class="div8">地毯</div>
+      <button class="giftButton">
+        <span class="mengban" style="display: none" readonly></span>
+        开始抽奖
+      </button>
+    </div>
+
+    <div id="bigAlert" style="display: none">
+      <div class="alertContent">
+        <span id="alertMessage"></span>
+        <button class="buttonAlert" onclick="closeAlert()">确定</button>
+      </div>
+    </div>
+
+    <script>
+      // 显示弹窗的
+      function showAlert(a) {
+        //先获取到大的div
+        let alertDiv = document.getElementById('bigAlert');
+        //在获取span标签
+        let messageSpan = document.getElementById('alertMessage');
+        // 传参(中奖提示)
+        // messageSpan.innerHTML = `<span style="color: red;">${a}</span>`;;
+        //中奖提示（模板字符串）
+        let startIndex = a.indexOf('中奖的是') + '中奖的是'.length;
+        let highlightedPart = a.slice(startIndex);
+        messageSpan.innerHTML = `
+				        <span>
+				            ${a.slice(0, startIndex)}
+				            <span style="color: red; font-weight: bold;">${highlightedPart}</span>
+				        </span>
+				    `;
+        //上面隐藏了 现在在显示出来
+        alertDiv.style.display = 'block';
+      }
+
+      // showAlert('aaaaaaaaaaaa'); // 测试弹层
+
+      //关闭弹窗的
+      function closeAlert() {
+        //获取到大div
+        let alertDiv = document.getElementById('bigAlert');
+        //隐藏
+        alertDiv.style.display = 'none';
+      }
+
+      // 获取box
+      let boxCenter = document.getElementsByClassName('box')[0];
+      // 获取boxcenter里的所有的div元素
+      let allGift = boxCenter.getElementsByTagName('div');
+      // 获取到抽奖按钮，后续绑定点击事件
+      let giftButtons = document.getElementsByClassName('giftButton')[0];
+
+      // 充当所有的奖品的下标
+      let giftIndex = 0;
+      // 旋转时间间隔
+      let time = 200;
+      // 存定时器的
+      let inter;
+      // 本次抽奖的随机圈数
+      let countTotal;
+
+      let mengban = document.getElementsByClassName('mengban')[0];
+
+      //闪动次数
+      let bulingBuling = 0;
+      // 点击事件
+      giftButtons.onclick = function () {
+        bulingBuling = 0;
+        // 在数 11-20 格之间 。随机生成格数
+        countTotal = Math.floor(Math.random() * 10 + 1) + 10;
+        console.log(countTotal, '闪烁次数----');
+
+        // 设定时器
+        inter = setInterval(autoScroll, time);
+        //蒙版显示。标签上隐藏了
+        mengban.style.display = 'block';
+        //清除点击事件 ，为了抽奖的时候不能再点抽奖按钮
+        giftButtons.onclick = null;
+      };
+      //这个函数会在定时器内被反复调用
+      function autoScroll() {
+        //每次被调用这个函数 闪动次数+1
+        bulingBuling++;
+        console.log(bulingBuling);
+
+        // 随机选择下一个要变色显示的奖品索引（不按照顺序）
+        let nextIndex;
+        nextIndex = Math.floor(Math.random() * allGift.length);
+        // 循环数组中的每一个元素 让他们颜色统一
+        for (let i = 0; i < allGift.length; i++) {
+          allGift[i].style.backgroundColor = 'cadetblue';
+        }
+        // 把 全部div 中挑出来的随机索引下标变黄
+        allGift[nextIndex].style.backgroundColor = 'yellow';
+        // 判断闪的格，是否等于上面要求的格数
+        if (bulingBuling == countTotal) {
+          mengban.style.display = 'none';
+          //满足就清除定时器
+          clearInterval(inter);
+          // 提示用户
+          showAlert('🎉恭喜你,中奖的是🎉:' + ' ' + allGift[nextIndex].innerHTML);
+          //========================重新绑定点击事件============================================
+          giftButtons.onclick = function () {
+            bulingBuling = 0;
+            // 在数100-200格之间 。随机生成格数
+            countTotal = Math.floor(Math.random() * 10 + 1) + 10;
+            console.log(countTotal, '闪烁次数----');
+            // 设定时器
+            inter = setInterval(autoScroll, time);
+            mengban.style.display = 'block';
+            giftButtons.onclick = null;
+          };
+        }
+      }
+    </script>
+  </body>
 </html>
