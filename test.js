@@ -1,8 +1,5 @@
 const dayjs = require('dayjs');
-const isLeapYear = require('dayjs/plugin/isLeapYear');
-dayjs.extend(isLeapYear);
-const now = dayjs();
-const data = now.isBefore(dayjs('2025-02-28').endOf('day'));
-const data2 = now.subtract(1, 'year').isLeapYear();
+const calendar = require('chinese-workday');
 
-console.log(data, data2);
+const data = dayjs().diff('2025-01-19', 'day');
+console.log(data, data > 7);

@@ -1,273 +1,265 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <title>抽奖页面</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>宝贝天数、月龄、年龄计算</title>
     <style>
-      /* 全局样式重置 */
       * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      /* 基础样式 */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        color: #333;
+        line-height: 1.6;
         margin: 0;
         padding: 0;
       }
 
-      /* 抽奖容器样式 */
-      .box {
-        background-color: lightgray;
-        width: 340px;
-        height: 340px;
-        position: relative;
-      }
-
-      /* 奖品方块样式 */
-      .box div {
-        background-color: cadetblue;
-        width: 100px;
-        height: 100px;
+      .cur-date {
+        font-size: 24px;
         text-align: center;
-        line-height: 100px;
+        color: #ff0000;
+        margin-top: 30px;
       }
 
-      /* 各个奖品方块定位样式 */
-      .div1 {
-        position: absolute;
-        top: 10px;
-        left: 10px;
+      .my-form {
+        padding: 15px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        margin: 20px auto;
       }
 
-      .div2 {
-        position: absolute;
-        top: 10px;
-        left: 120px;
+      .form-item {
+        margin-bottom: 15px;
       }
 
-      .div3 {
-        position: absolute;
-        top: 10px;
-        left: 230px;
+      .label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 16px;
       }
 
-      .div4 {
-        position: absolute;
-        top: 120px;
-        left: 230px;
-      }
-
-      .div5 {
-        position: absolute;
-        top: 230px;
-        left: 230px;
-      }
-
-      .div6 {
-        position: absolute;
-        top: 230px;
-        left: 120px;
-      }
-
-      .div7 {
-        position: absolute;
-        top: 230px;
-        left: 10px;
-      }
-
-      .div8 {
-        position: absolute;
-        top: 120px;
-        left: 10px;
-      }
-
-      /* 抽奖按钮样式 */
-      .giftButton {
-        position: absolute;
-        width: 100px;
-        height: 100px;
-        top: 120px;
-        left: 120px;
-        border-radius: 10px;
-        background-color: navajowhite;
-      }
-
-      #bigAlert {
-        display: flex;
-        position: fixed;
-        /* z-index: 1; */
-        /* left: 0; */
-        top: 0;
+      .inp input {
         width: 100%;
-        height: 100%;
-        /* overflow: auto; */
-        background-color: rgba(0, 0, 0, 0.4);
-        align-content: center;
-      }
-
-      .alertContent {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        background-color: white;
-        border-radius: 10px;
-        /* margin: 15%; */
-        /* padding: 20px; */
-        /* border: 1px solid #888; */
-        width: 300px;
-        height: 100px;
-        /* margin-left: auto;
-				margin-right: auto; */
-        margin: auto;
-      }
-
-      .buttonAlert {
         padding: 10px;
-        color: black;
-        background-color: gold;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        color: #fff;
+        background-color: #3b82f6;
         border: none;
-        border-radius: 10px;
+        border-radius: 4px;
         cursor: pointer;
       }
 
-      .buttonAlert:hover {
-        background-color: #609ea0;
-        color: blue;
-        transition: 0.3s ease;
+      .result-tit {
+        margin-top: 20px;
+        text-align: center;
+        color: #666;
       }
 
-      .mengban {
-        background-color: rgba(0, 0, 0, 0.5);
-        width: 100%;
-        height: 100%;
-        /* z-index: 2; */
-        position: absolute;
-        top: 0px;
-        left: 0px;
+      .result {
+        padding: 15px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
+        margin: 15px;
+        text-align: center;
+      }
+
+      .result p {
+        color: #16a34a;
+      }
+
+      .result p + p {
+        margin-top: 10px;
+      }
+
+      .no-data {
+        color: #9ca3af;
+      }
+
+      .error {
+        color: #ff0000;
+      }
+
+      .loading {
+        color: #3b82f6;
+      }
+
+      /* 隐藏类 */
+      .hide {
+        display: none;
+      }
+
+      /* 响应式样式 */
+      @media (max-width: 768px) {
+        .my-form {
+          margin: 10px;
+        }
+
+        .label {
+          font-size: 14px;
+        }
+
+        .inp input {
+          font-size: 14px;
+        }
+
+        .btn {
+          padding: 12px;
+          font-size: 15px;
+        }
+
+        .result {
+          font-size: 16px;
+        }
+      }
+
+      /* 新增样式以优化大屏幕下的显示 */
+      @media (min-width: 769px) {
+        .my-form,
+        .result {
+          max-width: 720px; /* 限制表单和结果的最大宽度 */
+          margin-left: auto;
+          margin-right: auto;
+        }
       }
     </style>
+    <!-- 引入 jq -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- 引入 dayjs -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.13/dayjs.min.js"
+      integrity="sha512-FwNWaxyfy2XlEINoSnZh1JQ5TRRtGow0D6XcmAWmYCRgvqOUTnzCxPc9uF35u5ZEpirk1uhlPVA19tflhvnW1g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
   </head>
-
   <body>
-    <div class="box">
-      <div class="div1">电脑</div>
-      <div class="div2">手机</div>
-      <div class="div3">音响</div>
-      <div class="div4">冰箱</div>
-      <div class="div5">空调</div>
-      <div class="div6">衣柜</div>
-      <div class="div7">沙发</div>
-      <div class="div8">地毯</div>
-      <button class="giftButton">
-        <span class="mengban" style="display: none" readonly></span>
-        开始抽奖
-      </button>
-    </div>
+    <h2 class="cur-date">当前日期：YYYY-MM-DD</h2>
 
-    <div id="bigAlert" style="display: none">
-      <div class="alertContent">
-        <span id="alertMessage"></span>
-        <button class="buttonAlert" onclick="closeAlert()">确定</button>
+    <div class="my-form">
+      <!-- 出生日期 -->
+      <div class="form-item">
+        <div class="label">出生日期：</div>
+        <div class="inp">
+          <input id="bornDate" type="date" placeholder="请选择" />
+        </div>
+      </div>
+      <!-- 现在日期 -->
+      <div class="form-item">
+        <div class="label">当前日期：</div>
+        <div class="inp">
+          <input id="nowDate" clearable type="date" placeholder="请选择" />
+        </div>
+      </div>
+      <!-- 计算按钮 -->
+      <div class="form-opt">
+        <button class="btn" id="calculate">计算天数及月龄或年龄</button>
       </div>
     </div>
-
+    <!-- 计算结果 -->
+    <h3 class="result-tit">计算结果展示</h3>
+    <div class="result">
+      <div class="no-data">暂无数据</div>
+      <div class="loading">计算中...</div>
+      <div class="error error1 hide">请输入日期</div>
+      <div class="error error2 hide">出生日期不能大于当前日期</div>
+      <p class="days hide">天数：x天</p>
+      <p class="months hide">月龄：x月 x天</p>
+      <p class="years hide">年龄：x岁 x月</p>
+    </div>
     <script>
-      // 显示弹窗的
-      function showAlert(a) {
-        //先获取到大的div
-        let alertDiv = document.getElementById('bigAlert');
-        //在获取span标签
-        let messageSpan = document.getElementById('alertMessage');
-        // 传参(中奖提示)
-        // messageSpan.innerHTML = `<span style="color: red;">${a}</span>`;;
-        //中奖提示（模板字符串）
-        let startIndex = a.indexOf('中奖的是') + '中奖的是'.length;
-        let highlightedPart = a.slice(startIndex);
-        messageSpan.innerHTML = `
-				        <span>
-				            ${a.slice(0, startIndex)}
-				            <span style="color: red; font-weight: bold;">${highlightedPart}</span>
-				        </span>
-				    `;
-        //上面隐藏了 现在在显示出来
-        alertDiv.style.display = 'block';
-      }
+      $(function () {
+        const BORN_DATE_KEY = 'BORN_DATE_KEY';
+        const curDateDom = $('.cur-date');
+        const bornDateInp = $('.my-form #bornDate');
+        const nowDateInp = $('.my-form #nowDate');
+        const calculateBtn = $('.my-form #calculate');
+        const resultDom = $('.result');
 
-      // showAlert('aaaaaaaaaaaa'); // 测试弹层
+        // 绑定事件
+        calculateBtn.on('click', handleCalculate);
+        // 初始化日期
+        initDate();
 
-      //关闭弹窗的
-      function closeAlert() {
-        //获取到大div
-        let alertDiv = document.getElementById('bigAlert');
-        //隐藏
-        alertDiv.style.display = 'none';
-      }
+        // 初始化日期
+        function initDate() {
+          // bornDateInp.value = localStorage.getItem(BORN_DATE_KEY) ? new Date('BORN_DATE_KEY');
+          let bornDate = localStorage.getItem(BORN_DATE_KEY);
+          bornDate = bornDate ? dayjs(bornDate).format('YYYY-MM-DD') : null;
+          nowDate = dayjs().format('YYYY-MM-DD');
 
-      // 获取box
-      let boxCenter = document.getElementsByClassName('box')[0];
-      // 获取boxcenter里的所有的div元素
-      let allGift = boxCenter.getElementsByTagName('div');
-      // 获取到抽奖按钮，后续绑定点击事件
-      let giftButtons = document.getElementsByClassName('giftButton')[0];
+          bornDateInp.val(bornDate);
+          nowDateInp.val(nowDate);
+          const curDateStr = `当前日期：${dayjs().format('YYYY-MM-DD')}`;
+          curDateDom.html(curDateStr);
 
-      // 充当所有的奖品的下标
-      let giftIndex = 0;
-      // 旋转时间间隔
-      let time = 200;
-      // 存定时器的
-      let inter;
-      // 本次抽奖的随机圈数
-      let countTotal;
-
-      let mengban = document.getElementsByClassName('mengban')[0];
-
-      //闪动次数
-      let bulingBuling = 0;
-      // 点击事件
-      giftButtons.onclick = function () {
-        bulingBuling = 0;
-        // 在数 11-20 格之间 。随机生成格数
-        countTotal = Math.floor(Math.random() * 10 + 1) + 10;
-        console.log(countTotal, '闪烁次数----');
-
-        // 设定时器
-        inter = setInterval(autoScroll, time);
-        //蒙版显示。标签上隐藏了
-        mengban.style.display = 'block';
-        //清除点击事件 ，为了抽奖的时候不能再点抽奖按钮
-        giftButtons.onclick = null;
-      };
-      //这个函数会在定时器内被反复调用
-      function autoScroll() {
-        //每次被调用这个函数 闪动次数+1
-        bulingBuling++;
-        console.log(bulingBuling);
-
-        // 随机选择下一个要变色显示的奖品索引（不按照顺序）
-        let nextIndex;
-        nextIndex = Math.floor(Math.random() * allGift.length);
-        // 循环数组中的每一个元素 让他们颜色统一
-        for (let i = 0; i < allGift.length; i++) {
-          allGift[i].style.backgroundColor = 'cadetblue';
+          if (bornDate && nowDate) calculateBtn.trigger('click');
         }
-        // 把 全部div 中挑出来的随机索引下标变黄
-        allGift[nextIndex].style.backgroundColor = 'yellow';
-        // 判断闪的格，是否等于上面要求的格数
-        if (bulingBuling == countTotal) {
-          mengban.style.display = 'none';
-          //满足就清除定时器
-          clearInterval(inter);
-          // 提示用户
-          showAlert('🎉恭喜你,中奖的是🎉:' + ' ' + allGift[nextIndex].innerHTML);
-          //========================重新绑定点击事件============================================
-          giftButtons.onclick = function () {
-            bulingBuling = 0;
-            // 在数100-200格之间 。随机生成格数
-            countTotal = Math.floor(Math.random() * 10 + 1) + 10;
-            console.log(countTotal, '闪烁次数----');
-            // 设定时器
-            inter = setInterval(autoScroll, time);
-            mengban.style.display = 'block';
-            giftButtons.onclick = null;
-          };
+
+        // 计算年龄
+        function handleCalculate() {
+          let bornDate = bornDateInp.val();
+          let nowDate = nowDateInp.val();
+          if (!bornDate || !nowDate) {
+            resultDom.find('.error1').show().siblings().hide();
+            return;
+          }
+          bornDate = dayjs(bornDate);
+          nowDate = dayjs(nowDate);
+
+          const days = nowDate.diff(bornDate, 'days');
+          if (days < 0) {
+            resultDom.find('.error2').show().siblings().hide();
+          } else {
+            // 缓存 bornDate
+            localStorage.setItem(BORN_DATE_KEY, bornDate);
+            // 虚拟延迟200ms
+            resultDom.find('.loading').show().siblings().hide();
+            setTimeout(showRes, 200, days);
+          }
         }
-      }
+
+        // 根据天数间隔计算天数、月数、年龄并展示结果
+        function showRes(days) {
+          // 计算逻辑，今天 到 明天 为两天（即 +1 天）
+          const d = days + 1;
+          const m = Math.floor(d / 30);
+          const m_d = d % 30;
+          const y = Math.floor(d / 365);
+          const y_m = d % 365;
+          dayStr = `天数：${d}天`;
+          monthStr = `月龄：${m}月 ${m_d}天`;
+          yearStr = `年龄：${y}岁 ${y_m}月`;
+          resultDom.find('.days').html(dayStr);
+          resultDom.find('.months').html(monthStr);
+          resultDom.find('.years').html(yearStr);
+
+          resultDom.find('.days').show().siblings().hide();
+          // 30天以上
+          if (days >= 30) {
+            resultDom.find('.months').show();
+          }
+          // 365天以上
+          if (days >= 365) {
+            resultDom.find('.years').show().siblings('.months').hide();
+          }
+        }
+      });
     </script>
   </body>
 </html>
