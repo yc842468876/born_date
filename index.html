@@ -85,6 +85,11 @@
         text-align: center;
       }
 
+      .duration {
+        color: #999;
+        margin-bottom: 10;
+      }
+
       .result p {
         color: #16a34a;
       }
@@ -181,10 +186,10 @@
     <h3 class="result-tit">计算结果展示</h3>
     <div class="result">
       <div class="no-data">暂无数据</div>
-      <div class="loading">计算中...</div>
+      <div class="loading hide">计算中...</div>
       <div class="error error1 hide">请输入日期</div>
       <div class="error error2 hide">出生日期不能大于当前日期</div>
-      <p class="duration hide">时间间隔：x天</p>
+      <div class="duration hide">时间间隔：x天</div>
       <p class="days hide">天数：x天</p>
       <p class="months hide">月龄：x月 x天</p>
       <p class="years hide">年龄：x岁 x月</p>
