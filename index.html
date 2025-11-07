@@ -1,151 +1,278 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>宝贝天数、月龄、年龄计算</title>
+    <title>宝宝成长记录 - 天数、月龄、年龄计算器</title>
     <style>
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
-      /* 基础样式 */
+
+      :root {
+        --primary-color: #ff9eb5;
+        --primary-light: #ffe4ec;
+        --secondary-color: #8bc7ff;
+        --accent-color: #ffd166;
+        --text-color: #333;
+        --light-text: #666;
+        --background: #fef7ff;
+        --card-bg: #ffffff;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --radius: 12px;
+      }
+
       body {
-        font-family: Arial, sans-serif;
-        background-color: #f7f7f7;
-        color: #333;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        background-color: var(--background);
+        color: var(--text-color);
         line-height: 1.6;
-        margin: 0;
-        padding: 0;
+        padding: 20px;
+        background-image: radial-gradient(var(--primary-light) 2px, transparent 2px);
+        background-size: 20px 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: var(--card-bg);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      h1 {
+        color: var(--primary-color);
+        font-size: 28px;
+        margin-bottom: 10px;
       }
 
       .cur-date {
-        font-size: 24px;
-        text-align: center;
-        color: #ff0000;
-        margin-top: 30px;
+        font-size: 18px;
+        color: var(--light-text);
+        font-weight: normal;
       }
 
-      .my-form {
-        padding: 15px;
-        background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        margin: 20px auto;
+      .card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 25px;
+        margin-bottom: 25px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .card-title {
+        font-size: 20px;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+      }
+
+      .card-title i {
+        margin-right: 10px;
       }
 
       .form-item {
-        margin-bottom: 15px;
+        margin-bottom: 20px;
       }
 
       .label {
         display: block;
-        margin-bottom: 5px;
-        font-size: 16px;
-      }
-
-      .form-item .inp {
-        width: 100%;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--text-color);
       }
 
       .inp input {
         width: 100%;
-        padding: 10px;
+        padding: 12px 15px;
         font-size: 16px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        transition: all 0.3s;
+        background-color: #f9f9f9;
+      }
+
+      .inp input:focus {
+        border-color: var(--primary-color);
+        background-color: white;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 158, 181, 0.2);
       }
 
       .btn {
         width: 100%;
-        padding: 10px;
+        padding: 14px;
         font-size: 16px;
-        color: #fff;
-        background-color: #3b82f6;
+        font-weight: 600;
+        color: white;
+        background: linear-gradient(135deg, var(--primary-color), #ff7b9c);
         border: none;
-        border-radius: 4px;
+        border-radius: 8px;
         cursor: pointer;
-        transition: all 0.8s;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(255, 158, 181, 0.4);
+      }
+
+      .btn:hover {
+        background: linear-gradient(135deg, #ff7b9c, var(--primary-color));
+        box-shadow: 0 6px 14px rgba(255, 158, 181, 0.5);
       }
 
       .btn:active {
-        opacity: 0.65;
-        transform: scale(0.85);
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(255, 158, 181, 0.4);
       }
 
       .result-tit {
-        margin-top: 20px;
         text-align: center;
-        color: #666;
+        margin: 30px 0 20px;
+        color: var(--light-text);
+        font-size: 22px;
       }
 
       .result {
-        padding: 15px;
-        background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        margin: 15px;
+        background-color: var(--card-bg);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 25px;
         text-align: center;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
       }
 
       .duration {
-        color: #999;
+        color: var(--light-text);
+        margin-bottom: 15px;
+        font-size: 18px;
       }
 
       .result p {
-        color: #16a34a;
-        margin-top: 10px;
+        margin: 12px 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--primary-color);
+        padding: 10px 20px;
+        border-radius: 8px;
+        background-color: var(--primary-light);
+        width: 100%;
+        max-width: 300px;
+        transition: transform 0.3s ease;
+      }
+
+      .result p:hover {
+        transform: scale(1.05);
       }
 
       .no-data {
-        color: #9ca3af;
+        color: #aaa;
+        font-size: 18px;
       }
 
       .error {
-        color: #ff0000;
+        color: #ff5252;
+        font-size: 16px;
+        padding: 15px;
+        background-color: #ffe6e6;
+        border-radius: 8px;
+        width: 100%;
       }
 
       .loading {
-        color: #3b82f6;
+        color: var(--secondary-color);
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
-      /* 隐藏类 */
+      .loading::after {
+        content: '';
+        width: 20px;
+        height: 20px;
+        margin-left: 10px;
+        border: 2px solid var(--secondary-color);
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
       .hide {
         display: none;
       }
 
-      /* 响应式样式 */
-      @media (max-width: 768px) {
-        .my-form {
-          margin: 10px;
-        }
+      .result-item {
+        animation: fadeIn 0.5s ease forwards;
+        opacity: 0;
+      }
 
-        .label {
-          font-size: 14px;
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
         }
-
-        .inp input {
-          font-size: 14px;
-        }
-
-        .btn {
-          padding: 12px;
-          font-size: 15px;
-        }
-
-        .result {
-          font-size: 16px;
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
       }
 
-      /* 新增样式以优化大屏幕下的显示 */
-      @media (min-width: 769px) {
-        .my-form,
-        .result {
-          max-width: 720px; /* 限制表单和结果的最大宽度 */
-          margin-left: auto;
-          margin-right: auto;
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--light-text);
+        font-size: 14px;
+      }
+
+      /* 响应式样式 */
+      @media (max-width: 768px) {
+        body {
+          padding: 15px;
+        }
+
+        h1 {
+          font-size: 24px;
+        }
+
+        .card {
+          padding: 20px;
+        }
+
+        .result p {
+          font-size: 18px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .cur-date {
+          font-size: 16px;
+        }
+
+        .card-title {
+          font-size: 18px;
+        }
+
+        .result p {
+          font-size: 16px;
+          padding: 8px 15px;
         }
       }
     </style>
@@ -160,60 +287,72 @@
     ></script>
   </head>
   <body>
-    <h2 class="cur-date">当前日期：YYYY-MM-DD</h2>
+    <div class="container">
+      <header>
+        <h1>宝宝成长记录</h1>
+        <div class="cur-date">当前日期：YYYY-MM-DD</div>
+      </header>
 
-    <div class="my-form">
-      <!-- 出生日期 -->
-      <div class="form-item">
-        <div class="label">出生日期：</div>
-        <div class="inp">
-          <input id="bornDate" type="date" placeholder="请选择" />
+      <div class="card">
+        <div class="card-title"><i>📅</i> 日期信息</div>
+        <!-- 出生日期 -->
+        <div class="form-item">
+          <div class="label">出生日期：</div>
+          <div class="inp">
+            <input id="bornDate" type="date" placeholder="请选择" />
+          </div>
+        </div>
+        <!-- 现在日期 -->
+        <div class="form-item">
+          <div class="label">当前日期：</div>
+          <div class="inp">
+            <input id="nowDate" clearable type="date" placeholder="请选择" />
+          </div>
+        </div>
+        <!-- 计算按钮 -->
+        <div class="form-opt">
+          <button class="btn" id="calculate">计算天数及月龄或年龄</button>
         </div>
       </div>
-      <!-- 现在日期 -->
-      <div class="form-item">
-        <div class="label">当前日期：</div>
-        <div class="inp">
-          <input id="nowDate" clearable type="date" placeholder="请选择" />
-        </div>
+
+      <!-- 计算结果 -->
+      <h3 class="result-tit">成长记录</h3>
+      <div class="card result">
+        <div class="no-data">请输入宝宝的出生日期查看成长记录</div>
+        <div class="loading hide">计算中...</div>
+        <div class="error error1 hide">请输入日期</div>
+        <div class="error error2 hide">出生日期不能大于当前日期</div>
+        <div class="duration hide">时间间隔：x天</div>
+        <p class="days result-item hide">天数：x天</p>
+        <p class="months result-item hide">月龄：x月 x天</p>
+        <p class="years result-item hide">年龄：x岁 x月</p>
       </div>
-      <!-- 计算按钮 -->
-      <div class="form-opt">
-        <button class="btn" id="calculate">计算天数及月龄或年龄</button>
-      </div>
+
+      <footer>
+        <p>记录宝宝成长的每一个珍贵时刻 ❤️</p>
+      </footer>
     </div>
-    <!-- 计算结果 -->
-    <h3 class="result-tit">计算结果展示</h3>
-    <div class="result">
-      <div class="no-data">暂无数据</div>
-      <div class="loading hide">计算中...</div>
-      <div class="error error1 hide">请输入日期</div>
-      <div class="error error2 hide">出生日期不能大于当前日期</div>
-      <div class="duration hide">时间间隔：x天</div>
-      <p class="days hide">天数：x天</p>
-      <p class="months hide">月龄：x月 x天</p>
-      <p class="years hide">年龄：x岁 x月</p>
-    </div>
+
     <script>
       $(function () {
         const BORN_DATE_KEY = 'BORN_DATE_KEY';
         const curDateDom = $('.cur-date');
-        const bornDateInp = $('.my-form #bornDate');
-        const nowDateInp = $('.my-form #nowDate');
-        const calculateBtn = $('.my-form #calculate');
+        const bornDateInp = $('#bornDate');
+        const nowDateInp = $('#nowDate');
+        const calculateBtn = $('#calculate');
         const resultDom = $('.result');
 
         // 绑定事件
         calculateBtn.on('click', handleCalculate);
+
         // 初始化日期
         initDate();
 
         // 初始化日期
         function initDate() {
-          // bornDateInp.value = localStorage.getItem(BORN_DATE_KEY) ? new Date('BORN_DATE_KEY');
           let bornDate = localStorage.getItem(BORN_DATE_KEY);
           bornDate = bornDate ? dayjs(bornDate).format('YYYY-MM-DD') : null;
-          nowDate = dayjs().format('YYYY-MM-DD');
+          const nowDate = dayjs().format('YYYY-MM-DD');
 
           bornDateInp.val(bornDate);
           nowDateInp.val(nowDate);
@@ -227,23 +366,35 @@
         function handleCalculate() {
           let bornDate = bornDateInp.val();
           let nowDate = nowDateInp.val();
+
           if (!bornDate || !nowDate) {
-            resultDom.find('.error1').show().siblings().hide();
+            showError('.error1');
             return;
           }
+
           bornDate = dayjs(bornDate);
           nowDate = dayjs(nowDate);
 
           const days = nowDate.diff(bornDate, 'days');
           if (days < 0) {
-            resultDom.find('.error2').show().siblings().hide();
+            showError('.error2');
           } else {
             // 缓存 bornDate
             localStorage.setItem(BORN_DATE_KEY, bornDate);
+            // 显示加载状态
+            showLoading();
             // 虚拟延迟200ms
-            resultDom.find('.loading').show().siblings().hide();
             setTimeout(showRes, 200, days);
           }
+        }
+
+        function showError(selector) {
+          resultDom.find('.error').hide();
+          resultDom.find(selector).show().siblings().not('.error').hide();
+        }
+
+        function showLoading() {
+          resultDom.find('.loading').show().siblings().hide();
         }
 
         // 根据天数间隔计算天数、月数、年龄并展示结果
@@ -254,24 +405,35 @@
           const m_d = d % 30;
           const y = Math.floor(d / 365);
           const y_m = Math.ceil((d % 365) / 30);
-          durationStr = `时间间隔：${days}天`;
-          dayStr = `天数：${d}天`;
-          monthStr = `月龄：${m}月 ${m_d ? m_d + '天' : ''}`;
-          yearStr = `年龄：${y}岁 ${y_m ? y_m + '月' : ''}`;
+
+          const durationStr = `时间间隔：${days}天`;
+          const dayStr = `天数：${d}天`;
+          const monthStr = `月龄：${m}月 ${m_d ? m_d + '天' : ''}`;
+          const yearStr = `年龄：${y}岁 ${y_m ? y_m + '月' : ''}`;
+
           resultDom.find('.duration').html(durationStr);
           resultDom.find('.days').html(dayStr);
           resultDom.find('.months').html(monthStr);
           resultDom.find('.years').html(yearStr);
 
-          resultDom.find('.duration').show().siblings().hide();
-          resultDom.find('.days').show();
-          // 30天以上
+          // 显示结果
+          resultDom.find('.loading').hide();
+          resultDom.find('.duration').show();
+          resultDom.find('.days').show().addClass('result-item');
+
+          // 30天以上显示月龄
           if (d >= 30) {
-            resultDom.find('.months').show();
+            setTimeout(() => {
+              resultDom.find('.months').show().addClass('result-item');
+            }, 150);
           }
-          // 365天以上
+
+          // 365天以上显示年龄
           if (d >= 365) {
-            resultDom.find('.years').show().siblings('.months').hide();
+            setTimeout(() => {
+              resultDom.find('.years').show().addClass('result-item');
+              resultDom.find('.months').hide();
+            }, 300);
           }
         }
       });
